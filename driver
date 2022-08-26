@@ -1,0 +1,160 @@
+format long
+clearvars
+
+%Initialising the data for each real estate company
+Allvalues=readmatrix("values3.xlsx","Sheet","All");
+
+%Initialising the initial values for the forecast
+pred=zeros(220,8);
+pred(1,1)=Allvalues(924,2);
+pred(1,2)=Allvalues(924,3);
+pred(1,3)=Allvalues(924,4);
+pred(1,4)=Allvalues(924,5);
+pred(1,5)=Allvalues(924,6);
+pred(1,6)=Allvalues(924,7);
+pred(1,7)=Allvalues(924,8);
+pred(1,8)=Allvalues(924,9);
+
+%Initialising a single matrix for all stock price values
+fin_mat=zeros(924,8);
+fin_mat(1:924,1)=Allvalues(1:924,2);
+fin_mat(1:924,2)=Allvalues(1:924,3);
+fin_mat(1:924,3)=Allvalues(1:924,4);
+fin_mat(1:924,4)=Allvalues(1:924,5);
+fin_mat(1:924,5)=Allvalues(1:924,6);
+fin_mat(1:924,6)=Allvalues(1:924,7);
+fin_mat(1:924,7)=Allvalues(1:924,8);
+fin_mat(1:924,8)=Allvalues(1:924,9);
+
+%Initialising the adjacency matrix
+adj=zeros(8,8);
+
+for i=1:8
+    for j=1:8
+        alpha=corrcoef(fin_mat(1:924,i),fin_mat(1:924,j));
+        adj(i,j)=alpha(1,2);
+    end
+end
+adj_2=zeros(8,8);
+for i=1:8
+    for j=1:8
+            adj_2(i,j)=(adj(i,j)+1)*0.5;
+    end
+end
+
+negativeadjacency=zeros(8,8);
+for i=1:8
+    for j=1:8
+        negativeadjacency(i,j)=1-adj_2(i,j);
+    end
+end
+
+figure(3)
+G3 = graph(negativeadjacency,'omitselfloops');
+g3 = plot(G3);
+layout(g3,'force','WeightEffect','direct')
+labelnode(g3,1,'Evergrande')
+labelnode(g3,2,'Kaisa')
+labelnode(g3,3,'R&F')
+labelnode(g3,4,'China Fortune')
+labelnode(g3,5,'Central China')
+labelnode(g3,6,'Everbright')
+labelnode(g3,7,'Greenland')
+labelnode(g3,8,'Wuhan Zall')
+title('Network of Case Study Real Estate Firms')
+
+
+teams_vect_A=zeros(1,8);
+teams_vect=[24,34,17,15,6,24,17,10];
+teams_vect_B=zeros(1,8);
+teams_vect_2=[0,32,28,24,21,0,3,11];
+teams_vect_3=[24,34,17,15,6,24,17,10,0,32,28,24,21,0,3,11];
+
+teamsadj=zeros(16,16);
+for i=1:16
+    for j=1:16
+        teamsadj(i,j)=abs(teams_vect_3(i)-teams_vect_3(j));
+        
+    end
+end
+
+ownershipvector=[0,0.5671,0.9,1,1,0,0.7,0,0,0,0,1,0.5907,1,0,0];
+biggest_adj=zeros(24,24);
+for i=1:16
+    for j=1:16
+        biggest_adj(i,j)=1/34*teamsadj(i,j);
+    end
+end
+for i=1:8
+    for j=1:8
+        biggest_adj(i+16,j+16)=negativeadjacency(i,j);
+    end
+end
+biggest_adj(2,17)=0.2;
+biggest_adj(3,18)=0.2;
+biggest_adj(4,19)=0.2;
+biggest_adj(12,20)=0.2;
+biggest_adj(5,21)=0.2;
+biggest_adj(7,22)=0.2;
+biggest_adj(13,23)=0.2;
+biggest_adj(14,24)=0.2;
+
+for i=1:24
+    for j=1:24
+        biggest_adj(j,i)=biggest_adj(i,j);
+    end
+end
+
+figure(4)
+G3 = graph(teamsadj,'omitselfloops');
+g3 = plot(G3);
+layout(g3,'force','WeightEffect','direct')
+labelnode(g3,1,'Shandong')
+labelnode(g3,2,'Guangzhou')
+labelnode(g3,3,'Shenzhen')
+labelnode(g3,4,'Guangzhou City')
+labelnode(g3,5,'Henan Jianye')
+labelnode(g3,6,'Chongqing Lifan')
+labelnode(g3,7,'Shijiazhuang')
+labelnode(g3,8,'Qingdao')
+labelnode(g3,9,'Changchun')
+labelnode(g3,10,'Shanghai Port')
+labelnode(g3,11,'Beijing')
+labelnode(g3,12,'Hebei')
+labelnode(g3,13,'Shanghai')
+labelnode(g3,14,'Wuhan')
+labelnode(g3,15,'Tianjin')
+labelnode(g3,16,'Dalian')
+title('Network of Case Study Football Clubs')
+
+figure(5)
+G3 = graph(biggest_adj,'omitselfloops');
+g3 = plot(G3);
+layout(g3,'force','WeightEffect','direct')
+labelnode(g3,1,'Shandong')
+labelnode(g3,2,'Guangzhou')
+labelnode(g3,3,'Shenzhen')
+labelnode(g3,4,'Guangzhou City')
+labelnode(g3,5,'Henan Jianye')
+labelnode(g3,6,'Chongqing Lifan')
+labelnode(g3,7,'Shijiazhuang')
+labelnode(g3,8,'Qingdao')
+labelnode(g3,9,'Changchun')
+labelnode(g3,10,'Shanghai Port')
+labelnode(g3,11,'Beijing')
+labelnode(g3,12,'Hebei')
+labelnode(g3,13,'Shanghai')
+labelnode(g3,14,'Wuhan')
+labelnode(g3,15,'Tianjin')
+labelnode(g3,16,'Dalian')
+labelnode(g3,17,'Evergrande')
+labelnode(g3,18,'Kaisa')
+labelnode(g3,19,'R&F')
+labelnode(g3,20,'China Fortune')
+labelnode(g3,21,'Central China')
+labelnode(g3,22,'Everbright')
+labelnode(g3,23,'Greenland')
+labelnode(g3,24,'Wuhan Zall')
+title('Interconnected Network')
+
+
